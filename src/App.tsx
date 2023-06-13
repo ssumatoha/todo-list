@@ -1,24 +1,49 @@
-import React from 'react';
-import logo from './logo.svg';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { useState } from 'react';
 import './App.css';
+import { TaskType, Todolist } from './Todolist';
+
+export type FilterPresType = "all" | "active" | "completed"
 
 function App() {
+
+  let [tasks, setTasks] = useState <Array<TaskType>> ([])
+
+  let [filterPres, setFilterPres] = useState<FilterPresType>("all")
+
+  const removeTask = () => {
+    setTasks(tasks.filter( task => !task.isDone)) 
+  }
+
+  const chFilter = (filter: FilterPresType) => {
+    setFilterPres(filter)
+  }
+
+  const chIsDone = (taskId: number) => {
+    let task = tasks.find(t => t.id === taskId)
+    if (task) {
+      task.isDone = !task.isDone
+    }
+    setTasks([...tasks])
+  }
+
+  const appendTask = (title: string) => {
+    let newTask = {id: Math.random() * 1000, title: title, isDone: false}
+    let newTasks = [newTask, ...tasks]
+    setTasks(newTasks)
+  }
+
+  let tasksForTodolist = tasks
+  if (filterPres === "active") {
+    tasksForTodolist = tasks.filter(task => !task.isDone)
+  }
+  if(filterPres === "completed") {
+    tasksForTodolist = tasks.filter(task => task.isDone)
+  }
+  
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Todolist name="Todo list" tasks={tasksForTodolist} removeTask={removeTask} chFilter={chFilter} appendTask={appendTask} chIsDone={chIsDone} filterPres={filterPres}/>
     </div>
   );
 }
