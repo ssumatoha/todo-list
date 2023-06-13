@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useState } from 'react';
 import './App.css';
-import { TaskType, Todolist } from './Todolist';
+import { TaskType, Todolist } from './components/Todolist';
 
 export type FilterPresType = "all" | "active" | "completed"
 

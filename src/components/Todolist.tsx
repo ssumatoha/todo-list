@@ -1,5 +1,5 @@
 import { Accordion, Button, ButtonGroup, Form, InputGroup, ListGroup } from "react-bootstrap"
-import { FilterPresType } from "./App"
+import { FilterPresType } from "../App"
 import { useState } from "react"
 
 export type TaskType = {
