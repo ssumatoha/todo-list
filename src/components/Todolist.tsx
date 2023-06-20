@@ -13,21 +13,20 @@ export type TaskType = {
 
 type TodolistPropsType = {
     name: string,
-    tasks: Array<TaskType>,
-    removeTask: () => void,
-    chFilter: (value: FilterPresType) => void,
-    appendTask: (value: string) => void,
-    chIsDone: (value: number) => void,
-    filterPres: FilterPresType
 }
 
 export const Todolist = (props: TodolistPropsType) => {
+
+    const [filterPres, setFilterPres] = useState<FilterPresType>("all")
 
     const [newTaskTitle, setNewTaskTitle] = useState("")
 
     const dispatch = useAppDispatch()
     const todos = useAppSelector(state => state.todos.list)
 
+    const chFilter = (filter: FilterPresType) => {
+        setFilterPres(filter)
+      }
 
     const addTask = () => {
         if (newTaskTitle.trim() !== "") {
@@ -35,6 +34,15 @@ export const Todolist = (props: TodolistPropsType) => {
             setNewTaskTitle("")
             console.log()
         } 
+    }
+
+    
+    let tasksForTodolist = todos
+    if (filterPres === "active") {
+        tasksForTodolist = todos.filter(task => !task.isDone)
+    }
+    if(filterPres === "completed") {
+        tasksForTodolist = todos.filter(task => task.isDone)
     }
   
     return (
@@ -48,17 +56,17 @@ export const Todolist = (props: TodolistPropsType) => {
                         <Button variant="primary" onClick={addTask}>Add task</Button>
                     </InputGroup>
                     <ListGroup>
-                        {todos.map( task => <ListGroup.Item className={task.isDone ? "opacity-50" : ""} as="li" key={task.id} onChange={() => dispatch(chIsDone(task.id))}>
-                                <Form.Check checked={task.isDone} type="checkbox" label={task.title}/>
+                        {tasksForTodolist.map( task => <ListGroup.Item className={task.isDone ? "opacity-50" : ""} as="li" key={task.id} onChange={() => dispatch(chIsDone(task.id))}>
+                                <Form.Check defaultChecked={task.isDone} type="checkbox" label={task.title}/>
                             </ListGroup.Item>)}
                     </ListGroup>
                 </Accordion.Body>
                 <ButtonGroup aria-label="Basic example" className="pb-3 pt-3">
-                    <Button variant={props.filterPres === "all" ? "primary" : "secondary"} onClick={ () => props.chFilter("all")}>All</Button>
-                    <Button variant={props.filterPres === "active" ? "primary" : "secondary"} onClick={ () => props.chFilter("active") }>Active</Button>
-                    <Button variant={props.filterPres === "completed" ? "primary" : "secondary"} onClick={ () => props.chFilter("completed") }>Completed</Button>
+                    <Button variant={filterPres === "all" ? "primary" : "secondary"} onClick={ () => chFilter("all")}>All</Button>
+                    <Button variant={filterPres === "active" ? "primary" : "secondary"} onClick={ () => chFilter("active") }>Active</Button>
+                    <Button variant={filterPres === "completed" ? "primary" : "secondary"} onClick={ () => chFilter("completed") }>Completed</Button>
                 </ButtonGroup>
-                <Button  className="m-3" variant="primary" onClick={() => dispatch(removeTodo)}>Clear complited</Button>
+                <Button  className="m-3" variant="primary" onClick={() => dispatch(removeTodo())}>Clear complited</Button>
             </Accordion.Item>
         </Accordion>
     </div>

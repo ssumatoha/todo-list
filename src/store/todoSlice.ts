@@ -26,7 +26,7 @@ export const todoSlice = createSlice({
                 todo.isDone = !todo.isDone
             }
         },
-        removeTodo: (state, action) => {
+        removeTodo: (state) => {
             state.list = state.list.filter(todo => !todo.isDone)
         }
     }
