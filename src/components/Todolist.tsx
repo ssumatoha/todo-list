@@ -1,6 +1,9 @@
 import { Accordion, Button, ButtonGroup, Form, InputGroup, ListGroup } from "react-bootstrap"
-import { FilterPresType } from "../App"
 import { useState } from "react"
+import { useAppDispatch, useAppSelector } from "../hook"
+import { addTodo, chIsDone, removeTodo } from "../store/todoSlice"
+
+type FilterPresType = "all" | "active" | "completed"
 
 export type TaskType = {
     id: number,
@@ -22,9 +25,13 @@ export const Todolist = (props: TodolistPropsType) => {
 
     const [newTaskTitle, setNewTaskTitle] = useState("")
 
+    const dispatch = useAppDispatch()
+    const todos = useAppSelector(state => state.todos.list)
+
+
     const addTask = () => {
         if (newTaskTitle.trim() !== "") {
-            props.appendTask(newTaskTitle.trim())
+            dispatch(addTodo(newTaskTitle.trim()))
             setNewTaskTitle("")
             console.log()
         } 
@@ -41,7 +48,7 @@ export const Todolist = (props: TodolistPropsType) => {
                         <Button variant="primary" onClick={addTask}>Add task</Button>
                     </InputGroup>
                     <ListGroup>
-                        {props.tasks.map( task => <ListGroup.Item className={task.isDone ? "opacity-50" : ""} as="li" key={task.id} onChange={() => props.chIsDone(task.id)}>
+                        {todos.map( task => <ListGroup.Item className={task.isDone ? "opacity-50" : ""} as="li" key={task.id} onChange={() => dispatch(chIsDone(task.id))}>
                                 <Form.Check checked={task.isDone} type="checkbox" label={task.title}/>
                             </ListGroup.Item>)}
                     </ListGroup>
@@ -51,7 +58,7 @@ export const Todolist = (props: TodolistPropsType) => {
                     <Button variant={props.filterPres === "active" ? "primary" : "secondary"} onClick={ () => props.chFilter("active") }>Active</Button>
                     <Button variant={props.filterPres === "completed" ? "primary" : "secondary"} onClick={ () => props.chFilter("completed") }>Completed</Button>
                 </ButtonGroup>
-                <Button  className="m-3" variant="primary" onClick={() => props.removeTask()}>Clear complited</Button>
+                <Button  className="m-3" variant="primary" onClick={() => dispatch(removeTodo)}>Clear complited</Button>
             </Accordion.Item>
         </Accordion>
     </div>

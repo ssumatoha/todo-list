@@ -2,14 +2,17 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useState } from 'react';
 import './App.css';
 import { TaskType, Todolist } from './components/Todolist';
+import { useAppSelector } from './hook'
 
 export type FilterPresType = "all" | "active" | "completed"
 
 function App() {
 
-  let [tasks, setTasks] = useState <Array<TaskType>> ([])
+  const todos = useAppSelector(state => state.todos.list)
 
-  let [filterPres, setFilterPres] = useState<FilterPresType>("all")
+  const [tasks, setTasks] = useState <Array<TaskType>> (todos)
+
+  const [filterPres, setFilterPres] = useState<FilterPresType>("all")
 
   const removeTask = () => {
     setTasks(tasks.filter( task => !task.isDone)) 
@@ -33,13 +36,14 @@ function App() {
     setTasks(newTasks)
   }
 
-  let tasksForTodolist = tasks
+  let tasksForTodolist = todos
   if (filterPres === "active") {
-    tasksForTodolist = tasks.filter(task => !task.isDone)
+    tasksForTodolist = todos.filter(task => !task.isDone)
   }
   if(filterPres === "completed") {
-    tasksForTodolist = tasks.filter(task => task.isDone)
+    tasksForTodolist = todos.filter(task => task.isDone)
   }
+  console.log(todos)
   
   return (
     <div className="App">
