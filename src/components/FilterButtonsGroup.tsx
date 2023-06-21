@@ -5,7 +5,7 @@ import type { FilterPresType } from "./Todolist"
 
 type FilterButtonsGroupType = {
     filterPres: FilterPresType,
-    chFilter: (arg0: string) => void,
+    chFilter: (arg0: FilterPresType) => void,
 }
 
 export const FilterButtonsGroup = (props: FilterButtonsGroupType) => {

@@ -1,9 +1,9 @@
-import { Accordion, Button, ButtonGroup, ListGroup } from "react-bootstrap"
+import { Accordion, ListGroup } from "react-bootstrap"
 import { useState } from "react"
-import { useAppDispatch, useAppSelector } from "../hook"
-import { removeTodo } from "../store/todoSlice"
+import { useAppSelector } from "../hook"
 import { Task } from "./Task"
-import { EntryField } from "./InputGroup"
+import { EntryField } from "./EntryField"
+import { FilterButtonsGroup } from "./FilterButtonsGroup"
 
 export type FilterPresType = "all" | "active" | "completed"
 
@@ -21,7 +21,6 @@ export const Todolist = (props: TodolistPropsType) => {
 
     const [filterPres, setFilterPres] = useState<FilterPresType>("all")
 
-    const dispatch = useAppDispatch()
     const todos = useAppSelector(state => state.todos.list)
 
     const chFilter = (filter: FilterPresType) => {
@@ -41,17 +40,12 @@ export const Todolist = (props: TodolistPropsType) => {
             <Accordion.Item eventKey="0">
                 <Accordion.Header>{props.name}</Accordion.Header>
                 <Accordion.Body>
-                    <EntryField/>
+                <EntryField/>
                     <ListGroup>
                         {tasksForTodolist.map( task => <Task task={task} key={task.id} />)}
                     </ListGroup>
                 </Accordion.Body>
-                <ButtonGroup aria-label="Basic example" className="pb-3 pt-3">
-                    <Button variant={filterPres === "all" ? "primary" : "secondary"} onClick={ () => chFilter("all")}>All</Button>
-                    <Button variant={filterPres === "active" ? "primary" : "secondary"} onClick={ () => chFilter("active") }>Active</Button>
-                    <Button variant={filterPres === "completed" ? "primary" : "secondary"} onClick={ () => chFilter("completed") }>Completed</Button>
-                </ButtonGroup>
-                <Button  className="m-3" variant="primary" onClick={() => dispatch(removeTodo())}>Clear complited</Button>
+                <FilterButtonsGroup filterPres={filterPres} chFilter={chFilter} />
             </Accordion.Item>
         </Accordion>
     )
