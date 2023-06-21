@@ -1,9 +1,11 @@
-import { Accordion, Button, ButtonGroup, Form, InputGroup, ListGroup } from "react-bootstrap"
+import { Accordion, Button, ButtonGroup, ListGroup } from "react-bootstrap"
 import { useState } from "react"
 import { useAppDispatch, useAppSelector } from "../hook"
-import { addTodo, chIsDone, removeTodo } from "../store/todoSlice"
+import { removeTodo } from "../store/todoSlice"
+import { Task } from "./Task"
+import { EntryField } from "./InputGroup"
 
-type FilterPresType = "all" | "active" | "completed"
+export type FilterPresType = "all" | "active" | "completed"
 
 export type TaskType = {
     id: number,
@@ -19,8 +21,6 @@ export const Todolist = (props: TodolistPropsType) => {
 
     const [filterPres, setFilterPres] = useState<FilterPresType>("all")
 
-    const [newTaskTitle, setNewTaskTitle] = useState("")
-
     const dispatch = useAppDispatch()
     const todos = useAppSelector(state => state.todos.list)
 
@@ -28,15 +28,6 @@ export const Todolist = (props: TodolistPropsType) => {
         setFilterPres(filter)
       }
 
-    const addTask = () => {
-        if (newTaskTitle.trim() !== "") {
-            dispatch(addTodo(newTaskTitle.trim()))
-            setNewTaskTitle("")
-            console.log()
-        } 
-    }
-
-    
     let tasksForTodolist = todos
     if (filterPres === "active") {
         tasksForTodolist = todos.filter(task => !task.isDone)
@@ -46,19 +37,13 @@ export const Todolist = (props: TodolistPropsType) => {
     }
   
     return (
-    <div>
         <Accordion defaultActiveKey="0">
             <Accordion.Item eventKey="0">
                 <Accordion.Header>{props.name}</Accordion.Header>
                 <Accordion.Body>
-                    <InputGroup className="mb-3">
-                        <Form.Control type="text" placeholder="введите текст" value={newTaskTitle} onChange={(e) => setNewTaskTitle(e.currentTarget.value)} />
-                        <Button variant="primary" onClick={addTask}>Add task</Button>
-                    </InputGroup>
+                    <EntryField/>
                     <ListGroup>
-                        {tasksForTodolist.map( task => <ListGroup.Item className={task.isDone ? "opacity-50" : ""} as="li" key={task.id} onChange={() => dispatch(chIsDone(task.id))}>
-                                <Form.Check defaultChecked={task.isDone} type="checkbox" label={task.title}/>
-                            </ListGroup.Item>)}
+                        {tasksForTodolist.map( task => <Task task={task} key={task.id} />)}
                     </ListGroup>
                 </Accordion.Body>
                 <ButtonGroup aria-label="Basic example" className="pb-3 pt-3">
@@ -69,6 +54,5 @@ export const Todolist = (props: TodolistPropsType) => {
                 <Button  className="m-3" variant="primary" onClick={() => dispatch(removeTodo())}>Clear complited</Button>
             </Accordion.Item>
         </Accordion>
-    </div>
     )
   }
